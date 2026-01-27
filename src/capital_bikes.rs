@@ -6,6 +6,7 @@ use reqwest::blocking::Client;
 use serde::{Serialize, Deserialize};
 use serde_xml_rs;
 
+use zip::ZipArchive;
 
 // Capital Bike API
 const BIKESHARE_HISTORY_URL: &str = "https://s3.amazonaws.com/capitalbikeshare-data";
@@ -66,3 +67,26 @@ pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes,
     Ok(body)
 }
  
+
+// AI Slop:
+// These do look like pretty clean objs, should the function expect them? Vs converting in func?
+use std::fs::File;
+use std::path::Path;
+
+pub fn unzip_file(zip_path: &str, extract_to_path: &str) -> Result<(), Box<dyn Error>> {
+    // Open the ZIP file -> Does this actually access the file? 
+    let file = File::open(zip_path)?;
+
+    // Create a ZipArchive from the file handle. The 'zip' crate requires the reader
+    // to implement the `Seek` trait, which `std::fs::File` does.
+    let mut archive = ZipArchive::new(file)?;
+
+    // Extract the archive contents into the specified directory
+    let destination = Path::new(extract_to_path);
+    archive.extract(destination)?;
+
+    println!("Successfully extracted archive to {}", destination.display());
+
+    Ok(())
+}
+

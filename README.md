@@ -29,3 +29,9 @@ Alternative is [`ureq`](https://github.com/algesten/ureq)
 Using `serde` to parse semi-structured data from HTTP responses, and potentially for serializing
 to Parquet. [This](https://stackoverflow.com/questions/37970355/read-xml-file-into-struct)
 StackOverflow thread outlines and example dealing with XML data.
+
+### Unzipping
+Using the `zip` [library](https://docs.rs/zip/7.2.0/zip/index.html) to unzip the hitoric CSVs.
+Package seems relatively heavy, and also unzipping via a file interface seems clunky, but don't
+want to spend a huge ammount of time handling zips at this stage.
+
