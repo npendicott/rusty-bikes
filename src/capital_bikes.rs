@@ -1,6 +1,7 @@
 use std::error::Error;
+use bytes::Bytes;
 
-// use reqwest::blocking::Client;
+use reqwest::blocking::Client;
 
 use serde::{Serialize, Deserialize};
 use serde_xml_rs;
@@ -50,3 +51,18 @@ pub fn get_bikeshare_history_index() -> Result<ListBucketResult, Box<dyn Error>>
 
     Ok(index)
 }
+
+pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes, Box<dyn Error>> {
+
+    // Pull resp - Client
+    let bikeshare_history_file_url: String = format!("{BIKESHARE_HISTORY_URL}/{0}", historic_file_ref.key);
+    println!("Getting index from {bikeshare_history_file_url}");
+
+    let client = Client::new();
+    let resp = client.get(bikeshare_history_file_url).send()?;
+
+    let body = resp.bytes()?;
+
+    Ok(body)
+}
+ 
