@@ -2,7 +2,7 @@
 Rust scripts pull Capital Bikeshare data <, and to serialize parquet files?>.
 
 ## Install Rust
-Install `rustup` via Rust's [install script](https://rust-lang.org/tools/install/).
+Install `rustup` via Rust's [install script](https://rust-lang.org/tools/install/)
 
 [Quickstart docs](https://doc.rust-lang.org/book/ch01-01-installation.html).
 

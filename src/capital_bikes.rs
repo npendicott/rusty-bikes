@@ -33,7 +33,6 @@ pub struct Contents {
 }
 
 
-
 pub fn get_bikeshare_history_index() -> Result<ListBucketResult, Box<dyn Error>> {
 
     let bikeshare_history_index_url: String = format!("{BIKESHARE_HISTORY_URL}");
@@ -52,6 +51,7 @@ pub fn get_bikeshare_history_index() -> Result<ListBucketResult, Box<dyn Error>>
 
     Ok(index)
 }
+
 
 pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes, Box<dyn Error>> {
 
@@ -73,7 +73,8 @@ pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes,
 use std::fs::File;
 use std::path::Path;
 
-pub fn unzip_file(zip_path: &str, extract_to_path: &str) -> Result<(), Box<dyn Error>> {
+// pub fn unzip_file(zip_path: &str, extract_to_path: &str) -> Result<(), Box<dyn Error>> {
+pub fn unzip_file(zip_path: &Path, extract_to_path: &Path) -> Result<(), Box<dyn Error>> {
     // Open the ZIP file -> Does this actually access the file? 
     let file = File::open(zip_path)?;
 
@@ -82,10 +83,10 @@ pub fn unzip_file(zip_path: &str, extract_to_path: &str) -> Result<(), Box<dyn E
     let mut archive = ZipArchive::new(file)?;
 
     // Extract the archive contents into the specified directory
-    let destination = Path::new(extract_to_path);
-    archive.extract(destination)?;
+    // let destination = Path::new(extract_to_path);
+    archive.extract(extract_to_path)?;
 
-    println!("Successfully extracted archive to {}", destination.display());
+    println!("Successfully extracted archive to {}", extract_to_path.display());
 
     Ok(())
 }
