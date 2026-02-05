@@ -9,6 +9,8 @@ use serde_xml_rs;
 
 mod capital_bikes;
 
+const LIMIT_DEV_RUNS: bool = true;  // TODO: Make an arg?
+
 const LOCAL_INDEX_FILEPATH: &str = "./data/index.xml";
 const LOCAL_HISTORY_DIRECTORY: &str = "./data/historic/raw";
 const LOCAL_HISTORY_UNZIP_DIRECTORY: &str = "./data/historic/unzipped";
@@ -64,10 +66,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
 
-        // let historic_file_path_ext = historic_file_path.extension()?;  //.and_then()?;
-        // let historic_file_path_ext_str = OsStr::to_str(historic_file_path_ext)?;
-        // println!("{}", historic_file_path_ext_str);
-
         let historic_file_contents = capital_bikes::get_bikeshare_history_file(&historic_file)?;
 
         // Write file to disk
@@ -82,8 +80,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         // Limit runs for testing
         i = i + 1;
-        if i == 1 {
-            break;
+        if LIMIT_DEV_RUNS {
+            if i == 1 {
+                break;
+            }
         }
     }
     
