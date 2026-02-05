@@ -2,6 +2,7 @@ use std::fs;
 use std::error::Error;
 // use std::io::Result; // Use std::io::Result for convenience --> What does this do??
 use std::path::Path;
+use std::ffi::OsStr;
 
 use serde_xml_rs;
 
@@ -45,9 +46,28 @@ fn main() -> Result<(), Box<dyn Error>> {
         // println!("storage_class: {}", historic_file.storage_class); 
         // println!(""); 
 
-        // TODO: Check for zip extension - After FP?
         // Get the file from API
         let historic_file_path = local_history_directory.join(&historic_file.key);  // TODO: Is join the best here?
+
+        // Check for zip extension and skip any non-zips        
+        match historic_file_path.extension().and_then(OsStr::to_str) {
+            Some("zip") => {
+                println!("{} is a zip.", historic_file_path.display());
+            }
+            Some(ext) => {
+                println!("{} is not a zip: {}.", historic_file_path.display(), ext);
+                continue;
+            }
+            None => {
+                println!("{} has no file extension.", historic_file_path.display());
+                continue;
+            }
+        }
+
+        // let historic_file_path_ext = historic_file_path.extension()?;  //.and_then()?;
+        // let historic_file_path_ext_str = OsStr::to_str(historic_file_path_ext)?;
+        // println!("{}", historic_file_path_ext_str);
+
         let historic_file_contents = capital_bikes::get_bikeshare_history_file(&historic_file)?;
 
         // Write file to disk
