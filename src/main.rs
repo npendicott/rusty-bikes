@@ -1,5 +1,3 @@
-// use std::cmp::Ordering;
-// use std::io;
 use std::fs;
 use std::error::Error;
 // use std::io::Result; // Use std::io::Result for convenience --> What does this do??
@@ -15,7 +13,7 @@ const LOCAL_HISTORY_DIRECTORY: &str = "./data/historic/raw";
 const LOCAL_HISTORY_UNZIP_DIRECTORY: &str = "./data/historic/unzipped";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize local paths
+    // Initialize paths and ensure local directories
     let local_index_filepath = Path::new(LOCAL_INDEX_FILEPATH);
     let local_index_directory = local_index_filepath.parent().unwrap();
     fs::create_dir_all(local_index_directory)?;
@@ -39,18 +37,17 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("\nIterating files:");
     let mut i: i32 = 0;
     for historic_file in index_result.contents {
-        // Check Output
-        println!("key: {}", historic_file.key);
-        println!("last_modified: {}", historic_file.last_modified);
-        println!("e_tag: {}", historic_file.e_tag);
-        println!("size: {}", historic_file.size);
-        println!("storage_class: {}", historic_file.storage_class); 
-        println!(""); 
+        // // Check Output
+        // println!("key: {}", historic_file.key);
+        // println!("last_modified: {}", historic_file.last_modified);
+        // println!("e_tag: {}", historic_file.e_tag);
+        // println!("size: {}", historic_file.size);
+        // println!("storage_class: {}", historic_file.storage_class); 
+        // println!(""); 
 
-        // TODO: Check for zip extension
+        // TODO: Check for zip extension - After FP?
         // Get the file from API
-        // let historic_file_path = format!("{local_history_directory}/{0}", historic_file.key);  // TODO: Path logic here?
-        let historic_file_path = local_history_directory.join(&historic_file.key);  // format!("{}/{0}", historic_file.key);  // TODO: Path logic here?
+        let historic_file_path = local_history_directory.join(&historic_file.key);  // TODO: Is join the best here?
         let historic_file_contents = capital_bikes::get_bikeshare_history_file(&historic_file)?;
 
         // Write file to disk
