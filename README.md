@@ -6,8 +6,7 @@ Install `rustup` via Rust's [install script](https://rust-lang.org/tools/install
 
 [Quickstart docs](https://doc.rust-lang.org/book/ch01-01-installation.html).
 
-If offline docs are needed, run `rustup doc
-`.
+If offline docs are needed, run `rustup doc`.
 
 ## Pull Capital Bikeshare data
 DC Capital Bikeshare data [index](https://capitalbikeshare.com/system-data).
@@ -35,3 +34,27 @@ Using the `zip` [library](https://docs.rs/zip/7.2.0/zip/index.html) to unzip the
 Package seems relatively heavy, and also unzipping via a file interface seems clunky, but don't
 want to spend a huge ammount of time handling zips at this stage.
 
+# Historic Data
+## Schema:
+
+| Schema | V1 (2010-2020/03) | V2 (2020/03-present) |
+|---|---|---|
+|  | "Duration" |  |
+|  |  | "ride_id" |
+|  |  | "rideable_type" |
+|  | "Start date" | "started_at" |
+|  | "End date" | "ended_at" |
+|  | "Start station number" | "start_station_name" |
+|  | "Start station" | "start_station_id" |
+|  | "End station number" | "end_station_id" |
+|  | "End station" | "end_station_name" |
+|  | "Bike number" |  | 
+|  | "Member type" | "member_casual" |
+|  |  | "ride_id" |
+|  |  | "rideable_type" |
+|  |  | "end_station_name" |
+|  |  | "end_station_id" |
+|  |  | "start_lat" |
+|  |  | "start_lng" |
+|  |  | "end_lat" |
+|  |  | "end_lng" |
