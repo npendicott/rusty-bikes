@@ -4,39 +4,20 @@ use std::path::Path;
 use std::ffi::OsStr;
 use std::env;
 
-use serde_xml_rs;  // TODO: Move to subpackage?
+// use serde_xml_rs;  // TODO: Move to subpackage?
 
 mod capital_bikes;
 
 // Consts
 const LIMIT_DEV_RUNS: bool = true;  // TODO: Make an arg?
 
+// Paths
 const LOCAL_INDEX_FILEPATH: &str = "./data/index.xml";
 const LOCAL_HISTORY_DIRECTORY: &str = "./data/historic/raw";
 const LOCAL_HISTORY_UNZIP_DIRECTORY: &str = "./data/historic/unzipped";
-
+// Unzip Test
 const LOCAL_HISTORY_UNZIP_TEST_DIRECTORY: &str = "./data/historic/unzipped_test";
 const LOCAL_HISTORY_PARQUET_DIRECTORY: &str = "./data/historic/parquet";
-
-// Argument Structure
-struct Arguments {
-    action: String,
-    test: bool,
-}
-
-fn parse_args(args: &[String]) -> Arguments {
-    let action = args[1].clone();
-    // Test?
-    // https://stackoverflow.com/questions/49886160/why-can-i-compare-a-string-to-a-str-using-if-but-not-when-using-match
-    let test: bool;
-    match args[2].as_str() {
-        "--test" => test = true,
-        _ => test = false,
-    }
-
-
-    Arguments { action, test }
-}
 
 
 // Actions
@@ -57,7 +38,8 @@ fn pull_historic() -> Result<(), Box<dyn Error>> {
     println!("{} files found in bucket.", index_result.contents.len());
 
     // Write the index to a file
-    let index_result_serialized = serde_xml_rs::to_string(&index_result)?;
+    // let index_result_serialized = serde_xml_rs::to_string(&index_result)?;
+    let index_result_serialized = capital_bikes::serialize_bikeshare_history_index(&index_result)?;//  serde_xml_rs::to_string()?;    
     fs::write(local_index_filepath, index_result_serialized)?;
     println!("Cached index to {}", local_index_filepath.display());
 
@@ -123,16 +105,54 @@ fn process_csv() -> Result<(), Box<dyn Error>> {
     let local_history_parquet_directory = Path::new(LOCAL_HISTORY_PARQUET_DIRECTORY);
     fs::create_dir_all(local_history_parquet_directory)?;
 
+    // Iterate CSV File Paths
     let csv_file_paths = fs::read_dir(local_history_unzip_test_directory)?;
-    for path in csv_file_paths {
-        println!("{}", path.unwrap().path().display());
+    for file_path_result in csv_file_paths {
+        let file_path = file_path_result.unwrap().path();
+        println!("{}", file_path.display());
+
+        // Read the CSV        
+        let file = fs::File::open(file_path)?;
+        let mut reader = csv::Reader::from_reader(file);
+        for result in reader.records() {
+            let record = result?;  //.expect("a CSV record");
+            println!("{:?}", record);
+        }
     }
 
     Ok(())
 }
 
 
+// Argument Structure
+struct Arguments {
+    action: String,
+    test: bool,
+}
+
+fn parse_args(args: &[String]) -> Arguments {
+    let action = args[1].clone();
+    // Test?
+    // https://stackoverflow.com/questions/49886160/why-can-i-compare-a-string-to-a-str-using-if-but-not-when-using-match
+    let test: bool;
+    match args[2].as_str() {
+        "--test" => test = true,
+        _ => test = false,
+    }
+
+
+    Arguments { action, test }
+}
+
+
 // Main
+// TODO: Copy this main format
+// fn main() {
+//     if let Err(err) = run() {
+//         println!("{}", err);
+//         process::exit(1);
+//     }
+// }
 fn main() -> Result<(), Box<dyn Error>> {
     // Parse Args
     let args: Vec<String> = env::args().collect();
@@ -147,7 +167,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         "process_csv" => process_csv()?,
         _ => println!("No action matched"),
     }
-
 
     Ok(())
 }

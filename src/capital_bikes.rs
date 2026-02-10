@@ -12,7 +12,7 @@ use zip::ZipArchive;
 const BIKESHARE_HISTORY_URL: &str = "https://s3.amazonaws.com/capitalbikeshare-data";
 
 
-// API data structures
+// Index XML
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "PascalCase")]
 pub struct ListBucketResult {
@@ -34,16 +34,10 @@ pub struct Contents {
 
 
 pub fn get_bikeshare_history_index() -> Result<ListBucketResult, Box<dyn Error>> {
-
+    // Pull resp - One off
     let bikeshare_history_index_url: String = format!("{BIKESHARE_HISTORY_URL}");
     println!("Getting index from {bikeshare_history_index_url}");
-
-    // Pull resp - One off
     let resp = reqwest::blocking::get(bikeshare_history_index_url)?;
-
-    // // Pull resp - Client
-    // let client = Client::new();
-    // let resp = client.get(bikeshare_history_index_url).send()?;
     
     // Parse output
     let body = resp.text()?;
@@ -53,8 +47,14 @@ pub fn get_bikeshare_history_index() -> Result<ListBucketResult, Box<dyn Error>>
 }
 
 
-pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes, Box<dyn Error>> {
+pub fn serialize_bikeshare_history_index(index: &ListBucketResult) -> Result<String, Box<dyn Error>>{
+    let index_serialized = serde_xml_rs::to_string(&index)?;
+    Ok(index_serialized)
+}
 
+
+// Download files -> Unzip Bytes??
+pub fn get_bikeshare_history_file(historic_file_ref: &Contents) -> Result<Bytes, Box<dyn Error>> {
     // Pull resp - Client
     let bikeshare_history_file_url: String = format!("{BIKESHARE_HISTORY_URL}/{0}", historic_file_ref.key);
     println!("Getting index from {bikeshare_history_file_url}");
