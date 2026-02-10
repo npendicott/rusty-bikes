@@ -3,6 +3,7 @@ use std::error::Error;
 // use std::io::Result; // Use std::io::Result for convenience --> What does this do??
 use std::path::Path;
 use std::ffi::OsStr;
+use std::env;
 
 use serde_xml_rs;
 
@@ -15,7 +16,35 @@ const LOCAL_INDEX_FILEPATH: &str = "./data/index.xml";
 const LOCAL_HISTORY_DIRECTORY: &str = "./data/historic/raw";
 const LOCAL_HISTORY_UNZIP_DIRECTORY: &str = "./data/historic/unzipped";
 
-fn main() -> Result<(), Box<dyn Error>> {
+
+// Argument Structure
+struct Arguments {
+    action: String,
+    test: bool,
+}
+
+fn parse_args(args: &[String]) -> Arguments {
+    let action = args[1].clone();
+    // Test?
+    // https://stackoverflow.com/questions/49886160/why-can-i-compare-a-string-to-a-str-using-if-but-not-when-using-match
+    let mut test: bool;
+    // match &args[2] == "--test" {
+    //     true => test = true,
+    //     _ => test = false,
+    // }
+
+    match args[2].as_str() {
+        "--test" => test = true,
+        _ => test = false,
+    }
+
+
+    Arguments { action, test }
+}
+
+
+// Actions
+fn pull_historic() -> Result<(), Box<dyn Error>> {
     // Initialize paths and ensure local directories
     let local_index_filepath = Path::new(LOCAL_INDEX_FILEPATH);
     let local_index_directory = local_index_filepath.parent().unwrap();
@@ -87,6 +116,29 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
     
+
+    Ok(())
+}
+
+fn 
+
+// Main
+fn main() -> Result<(), Box<dyn Error>> {
+    let args: Vec<String> = env::args().collect();
+
+    let arguments: Arguments = parse_args(&args);
+
+    // let action = &args[1];
+    // let flag = &args[2];
+
+    println!("We want to: {0}", arguments.action);
+    println!("Test? {0}", arguments.test);
+
+    match arguments.action.as_str() {
+        "pull_historic" => pull_historic()?,
+        _ => println!("No action matched"),
+    }
+
 
     Ok(())
 }
