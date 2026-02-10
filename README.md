@@ -20,6 +20,7 @@ rusty-bikes pull_historic --test  # Only pull 2 specified historic test files
 To run in Cargo:
 ```bash
 cargo run -- pull_historic --test
+cargo run -- process_csv --test
 ```
 
 ### Schema:
@@ -62,13 +63,15 @@ Using `serde` to parse semi-structured data from HTTP responses, and potentially
 to Parquet. [This](https://stackoverflow.com/questions/37970355/read-xml-file-into-struct)
 StackOverflow thread outlines and example dealing with XML data.
 
+Also, guess I need a crate for [csv](https://docs.rs/csv/latest/csv/#brief-overview)? We aren't
+in Python anymore
+
 ### Unzipping
 Using the `zip` [library](https://docs.rs/zip/7.2.0/zip/index.html) to unzip the hitoric CSVs.
 Package seems relatively heavy, and also unzipping via a file interface seems clunky, but don't
 want to spend a huge ammount of time handling zips at this stage.
 
 ### CLI Interface
-
 Starting w/ some simple flags just to get running (and not commenting/uncommenting a bunch of
 variables). Not sure if the ideal state is a CLI or a webserver, if CLI then maybe 
 [clap](https://docs.rs/clap/latest/clap/)?
